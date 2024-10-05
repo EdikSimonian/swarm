@@ -1,0 +1,72 @@
+version: '3'
+
+networks:
+  deb-network:
+    driver: overlay
+    internal: true
+  deb-test-network:
+    driver: overlay
+    internal: true
+  deb-dev-network:
+    driver: overlay
+    internal: true
+
+secrets:
+  ingress-conf:
+    file: ./ingress.conf
+    external: true
+
+  nginx-conf:
+    file: ./nginx.conf
+    external: true
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - deb-network
+      - deb-test-network
+      - deb-dev-network
+    command: ["nginx", "-g", "daemon off;"]
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+    secrets:
+      - source: ingress-conf
+        target: /etc/nginx/nginx.conf
+        mode: 0644
+
+  deb-dev1:
+    image: nginx:latest
+    environment:
+      - HOSTNAME={{.Node.Hostname}}
+    networks:
+      - deb-dev-network
+    secrets:
+      - source: nginx-conf
+        target: /etc/nginx/nginx.conf
+        mode: 0644
+  deb-dev2:
+    image: nginx:latest
+    environment:
+      - HOSTNAME={{.Node.Hostname}}
+    networks:
+      - deb-dev-network
+    secrets:
+      - source: nginx-conf
+        target: /etc/nginx/nginx.conf
+        mode: 0644
+  deb-dev3:
+    image: nginx:latest
+    environment:
+      - HOSTNAME={{.Node.Hostname}}
+    networks:
+      - deb-dev-network
+    secrets:
+      - source: nginx-conf
+        target: /etc/nginx/nginx.conf
+        mode: 0644
