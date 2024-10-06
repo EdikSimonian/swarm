@@ -4,12 +4,18 @@ networks:
   deb-network:
     driver: overlay
     internal: true
+    driver_opts:
+      encrypted: "true"
   deb-test-network:
     driver: overlay
     internal: true
+    driver_opts:
+      encrypted: "true"
   deb-dev-network:
     driver: overlay
     internal: true
+    driver_opts:
+      encrypted: "true"
 
 secrets:
   ingress-conf:
